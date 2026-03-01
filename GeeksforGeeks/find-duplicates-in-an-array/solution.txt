@@ -1,0 +1,28 @@
+// Problem: Array Duplicates
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public ArrayList<Integer> findDuplicates(int[] arr) {
+        // code here
+         ArrayList<Integer> result = new ArrayList<>();
+        int n = arr.length;
+
+        for (int i = 0; i < n; i++) {
+            int index = Math.abs(arr[i]) - 1;  // value -> index (1-based to 0-based)
+
+            if (arr[index] < 0) {
+                // already visited → duplicate found
+                result.add(index + 1);
+            } else {
+                // mark as visited
+                arr[index] = -arr[index];
+            }
+        }
+
+        // ⚠️ IMPORTANT: GFG expects empty list [] if no duplicates.
+        // So don't add -1 here. Just return result as it is.
+        return result;
+    }
+}
