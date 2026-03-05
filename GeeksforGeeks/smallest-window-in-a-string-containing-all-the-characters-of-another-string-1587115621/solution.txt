@@ -1,0 +1,49 @@
+// Problem: Smallest window containing all characters
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public static String minWindow(String s, String p) {
+
+        if (s.length() < p.length()) return "";
+
+        int[] freq = new int[256];
+
+        for (char c : p.toCharArray())
+            freq[c]++;
+
+        int start = 0, startIndex = -1;
+        int minLen = Integer.MAX_VALUE;
+        int count = 0;
+
+        for (int end = 0; end < s.length(); end++) {
+
+            char c = s.charAt(end);
+            freq[c]--;
+
+            if (freq[c] >= 0)
+                count++;
+
+            while (count == p.length()) {
+
+                if (end - start + 1 < minLen) {
+                    minLen = end - start + 1;
+                    startIndex = start;
+                }
+
+                char left = s.charAt(start);
+                freq[left]++;
+
+                if (freq[left] > 0)
+                    count--;
+
+                start++;
+            }
+        }
+
+        if (startIndex == -1) return "";
+
+        return s.substring(startIndex, startIndex + minLen);
+    }
+}
