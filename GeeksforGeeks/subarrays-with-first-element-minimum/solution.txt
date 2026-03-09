@@ -1,0 +1,23 @@
+// Problem: Subarrays with First Element Minimum
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+import java.util.*;
+
+class Solution {
+    public int countSubarrays(int[] arr) {
+        int n = arr.length;
+        int count = 0;
+        Stack<Integer> stack = new Stack<>();
+        for(int i = n - 1; i >= 0; i--){
+            while(!stack.isEmpty() && arr[stack.peek()] >= arr[i]){
+                stack.pop();
+            }
+            int next = stack.isEmpty() ? n : stack.peek();
+            count += next - i;
+            stack.push(i);
+        }
+        return count;
+    }
+}
