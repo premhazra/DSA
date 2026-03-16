@@ -1,0 +1,50 @@
+// Problem: Burning Tree
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+        right = null;
+    }
+}
+*/
+
+import java.util.*;
+
+class Solution {
+    public int minTime(Node root, int target) {
+        Map<Node,Node> parent = new HashMap<>();
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+        Node start = null;
+        while(!q.isEmpty()){
+            Node cur = q.poll();
+            if(cur.data == target) start = cur;
+            
+            if(cur.left!=null){
+                parent.put(cur.left,cur);
+                q.add(cur.left);
+            }
+            if(cur.right!=null){
+                parent.put(cur.right,cur);
+                q.add(cur.right);
+            }
+        }
+        Set<Node> vis = new HashSet<>();
+        q.add(start);
+        vis.add(start);
+        int time = -1;
+        
+        while(!q.isEmpty()){
+            int size = q.size();
+            time++;
+            while(size-- > 0){
+                Node cur = q.poll();
+                
+                if(cur.left!=null && vis.add(cur.left)) q.add(cur.left);
+                if(cur.right!=null && vis.add(cur.right)) q.add(cur.right);
+                if(parent.containsKey(cur) && vis.add(parent.get(cur))) q.add(parent.get(cur));
+            }
+        }
+        return time;
+    }
+}
