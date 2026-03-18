@@ -1,0 +1,30 @@
+// Problem: Largest BST
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+// class Node
+// {
+//     int data;
+//     Node left, right;
+
+//     public Node(int d)
+//     {
+//         data = d;
+//         left = right = null;
+//     }
+// }
+
+class Info {
+    int size;      // size of subtree
+    int min;       // minimum value
+    int max;       // maximum value
+    boolean isBST; // is BST or not
+
+    Info(int size, int min, int max, boolean isBST) {
+        this.size = size;
+        this.min = min;
+        this.max = max;
+        this.isBST = isBST;
+    }
+}
