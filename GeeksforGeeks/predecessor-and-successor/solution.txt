@@ -1,0 +1,35 @@
+// Problem: Predecessor and Successor
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+/*
+class Node {
+    int data;
+    Node left, right;
+    Node(int x) {
+        data = x;
+        left = right = null;
+    }
+}
+*/
+
+class Solution {
+    public ArrayList<Node> findPreSuc(Node root, int key) {
+        Node pre = null, suc = null;
+        Node curr = root;
+        while (curr != null) {
+            if (curr.data < key) {
+                pre = curr;
+                curr = curr.right;
+            } else {
+                suc = curr;
+                curr = curr.left;
+            }
+        }
+        ArrayList<Node> res = new ArrayList<>();
+        res.add(pre);
+        res.add(suc);
+        return res;
+    }
+}
