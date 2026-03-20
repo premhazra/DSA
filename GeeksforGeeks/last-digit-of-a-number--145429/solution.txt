@@ -1,0 +1,17 @@
+// Problem: For Java21 Platform
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public int lastDigit(int n) {
+        // Code here
+        int last;
+        
+        while(n!= 0){
+            last= n%10;
+            return Math.abs(last);
+        }
+        return 0;
+    }
+}
