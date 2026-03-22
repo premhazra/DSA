@@ -1,0 +1,25 @@
+// Problem: Third Largest
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+import java.util.*;
+
+class Solution {
+    static int thirdLargest(int arr[]) {
+        if (arr.length < 3) return -1;
+
+        Arrays.sort(arr);
+        return arr[arr.length - 3];
+    }
+
+    public static void main(String[] args) {
+        int[] arr1 = {2, 4, 1, 3, 5};
+        int[] arr2 = {10, 2};
+        int[] arr3 = {5, 5, 5};
+
+        System.out.println(thirdLargest(arr1)); // 3
+        System.out.println(thirdLargest(arr2)); // -1
+        System.out.println(thirdLargest(arr3)); // 5
+    }
+}
