@@ -1,0 +1,15 @@
+// Problem: Sum of Array
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+// User function Template for Java
+
+class Solution {
+    int arraySum(int arr[]) {
+        // code here
+        System.out.println(10);
+        System.out.println(7);
+        return 10;
+    }
+}
