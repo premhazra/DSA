@@ -1,0 +1,42 @@
+// Problem: Number of Ways to Arrive at Destination
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+import java.util.*;
+
+class Solution {
+    public int countPaths(int V, int[][] edges) {
+        List<List<int[]>> adj = new ArrayList<>();
+        for (int i = 0; i < V; i++) adj.add(new ArrayList<>());
+        for (int[] e : edges) {
+            adj.get(e[0]).add(new int[]{e[1], e[2]});
+            adj.get(e[1]).add(new int[]{e[0], e[2]});
+        }
+        long[] dist = new long[V];
+        Arrays.fill(dist, Long.MAX_VALUE);
+        int[] ways = new int[V];
+        dist[0] = 0;
+        ways[0] = 1;
+        PriorityQueue<long[]> pq = new PriorityQueue<>((a, b) -> Long.compare(a[0], b[0]));
+        pq.offer(new long[]{0, 0});
+        int mod = 1000000007;
+        while (!pq.isEmpty()) {
+            long[] cur = pq.poll();
+            long d = cur[0];
+            int node = (int) cur[1];
+            for (int[] nei : adj.get(node)) {
+                int next = nei[0];
+                long nd = d + nei[1];
+                if (nd < dist[next]) {
+                    dist[next] = nd;
+                    ways[next] = ways[node];
+                    pq.offer(new long[]{nd, next});
+                } else if (nd == dist[next]) {
+                    ways[next] = (ways[next] + ways[node]) % mod;
+                }
+            }
+        }
+        return ways[V - 1];
+    }
+}
