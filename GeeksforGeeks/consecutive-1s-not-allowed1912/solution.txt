@@ -1,0 +1,18 @@
+// Problem: Consecutive 1's not allowed
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    int countStrings(int n) {
+        int end0 = 1;
+        int end1 = 1;
+        for(int i = 2; i <= n; i++) {
+            int newend0 = end0 + end1;
+            int newend1 = end0;
+            end0 = newend0;
+            end1 = newend1;
+        }
+        return end0 + end1;
+    }
+}
