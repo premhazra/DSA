@@ -3,89 +3,77 @@
 // Source: LeetCode
 // Language: Java
 // Synced by CodexSync
-import java.util.*;
-
 class Solution {
     public int maxWalls(int[] robots, int[] distance, int[] walls) {
         int n = robots.length;
+        // -1 .... +inf
+        int r[][] = new int[n+2][2];
+        for(int i=0; i<n; i++) {
+            r[i][0] = robots[i];
+            r[i][1] = distance[i];
+        }
+        r[n][0] = -1;
+        r[n][1] = 0;
+        r[n+1][0] = Integer.MAX_VALUE;
+        r[n+1][1] = 0;
+        // O(nlogn + mlogn)
+        // O(n)
+        Arrays.sort(r, (a,b)->Integer.compare(a[0],b[0]));
         Arrays.sort(walls);
 
-        int[][] arr = new int[n][2];
-        for (int i = 0; i < n; i++) {
-            arr[i][0] = robots[i];
-            arr[i][1] = distance[i];
+        int LL=0, LR=1, RL=2, RR=3;
+        int dp[] = new int[4];
+        int leftrobot = 0;
+        int rightrobot = 1;
+        
+        for(int wall : walls) {
+
+            while(wall > r[rightrobot][0]) {
+                leftrobot++;
+                rightrobot++;
+
+                // dp state
+                int maxL = Math.max(dp[LL], dp[RL]);
+                int maxR = Math.max(dp[LR], dp[RR]);
+
+                dp[LL] = maxL;
+                dp[LR] = maxL;
+
+                
+                dp[RL] = maxR;
+                dp[RR] = maxR;
+            }
+
+            int r1reach = r[leftrobot][0] + r[leftrobot][1];
+            int r2reach = r[rightrobot][0] - r[rightrobot][1];
+
+            boolean canR1 = wall <= r1reach; 
+            boolean canR2 = wall >= r2reach;
+
+            boolean isRightPoint = wall==r[rightrobot][0];
+
+            // state LL 
+            
+            if(canR2)
+                dp[LL]++;
+
+            // state LR
+            if(isRightPoint)
+                dp[LR]++;
+            // state RL
+            if(canR1 || canR2)
+                dp[RL]++;
+            // state RR
+            if(canR1 || isRightPoint)
+                dp[RR]++;
         }
-        Arrays.sort(arr, (a, b) -> a[0] - b[0]);
-
-        // Precompute gains for segments
-        int[] gainLeft = new int[n];   // robot i shooting LEFT into segment (i-1, i)
-        int[] gainRight = new int[n];  // robot i shooting RIGHT into segment (i, i+1)
-
-        for (int i = 0; i < n; i++) {
-            int r = arr[i][0], d = arr[i][1];
-
-            int leftBlock = (i == 0) ? Integer.MIN_VALUE : arr[i - 1][0];
-            int rightBlock = (i == n - 1) ? Integer.MAX_VALUE : arr[i + 1][0];
-
-            // LEFT interval (affects segment i)
-            int l1 = Math.max(r - d, leftBlock);
-            int r1 = r;
-            gainLeft[i] = count(walls, l1, r1);
-
-            // RIGHT interval (affects segment i)
-            int l2 = r;
-            int r2 = Math.min(r + d, rightBlock);
-            gainRight[i] = count(walls, l2, r2);
+        int ans = 0;
+        for(int v : dp) {
+            ans = Math.max(v, ans);
         }
 
-        // DP
-        int[][] dp = new int[n][2];
+        return ans;
 
-        // Base
-        dp[0][0] = gainLeft[0];   // first robot shoots left
-        dp[0][1] = gainRight[0];  // first robot shoots right
 
-        for (int i = 1; i < n; i++) {
-            // If robot i shoots LEFT → segment i counted from LEFT
-            dp[i][0] = Math.max(
-                dp[i - 1][0] + gainLeft[i],  // prev LEFT → no conflict
-                dp[i - 1][1] + gainLeft[i]   // prev RIGHT → still fine
-            );
-
-            // If robot i shoots RIGHT → segment i counted from RIGHT
-            // BUT segment (i-1, i) already handled by previous robot
-            dp[i][1] = Math.max(
-                dp[i - 1][0] + gainRight[i],
-                dp[i - 1][1] + gainRight[i]
-            );
-        }
-
-        return Math.max(dp[n - 1][0], dp[n - 1][1]);
-    }
-
-    private int count(int[] walls, int l, int r) {
-        int left = lowerBound(walls, l);
-        int right = upperBound(walls, r);
-        return right - left;
-    }
-
-    private int lowerBound(int[] arr, int target) {
-        int l = 0, h = arr.length;
-        while (l < h) {
-            int mid = (l + h) / 2;
-            if (arr[mid] < target) l = mid + 1;
-            else h = mid;
-        }
-        return l;
-    }
-
-    private int upperBound(int[] arr, int target) {
-        int l = 0, h = arr.length;
-        while (l < h) {
-            int mid = (l + h) / 2;
-            if (arr[mid] <= target) l = mid + 1;
-            else h = mid;
-        }
-        return l;
     }
 }
