@@ -15,7 +15,7 @@ class Solution {
         }
         Arrays.sort(arr, (a, b) -> a[0] - b[0]);
         Arrays.sort(walls);
-        int result = 0;
+        Set<Integer> destroyed = new HashSet<>();
         for (int i = 0; i < n; i++) {
             int r = arr[i][0];
             int d = arr[i][1];
@@ -23,35 +23,25 @@ class Solution {
             int rightBlock = (i == n - 1) ? Integer.MAX_VALUE : arr[i + 1][0];
             int leftStart = Math.max(r - d, leftBlock + 1);
             int leftEnd = r;
-            int leftCount = countWalls(walls, leftStart, leftEnd);
             int rightStart = r;
             int rightEnd = Math.min(r + d, rightBlock - 1);
-            int rightCount = countWalls(walls, rightStart, rightEnd);
-            result += Math.max(leftCount, rightCount);
+            List<Integer> leftWalls = getWalls(walls, leftStart, leftEnd);
+            List<Integer> rightWalls = getWalls(walls, rightStart, rightEnd);
+            if (leftWalls.size() > rightWalls.size()) {
+                destroyed.addAll(leftWalls);
+            } else {
+                destroyed.addAll(rightWalls);
+            }
         }
-        return result;
+        return destroyed.size();
     }
-    private int countWalls(int[] walls, int left, int right) {
-        int l = lowerBound(walls, left);
-        int r = upperBound(walls, right);
-        return r - l;
-    }
-    private int lowerBound(int[] arr, int target) {
-        int l = 0, h = arr.length;
-        while (l < h) {
-            int mid = (l + h) / 2;
-            if (arr[mid] < target) l = mid + 1;
-            else h = mid;
+    private List<Integer> getWalls(int[] walls, int l, int r) {
+        List<Integer> res = new ArrayList<>();
+        for (int w : walls) {
+            if (w >= l && w <= r) {
+                res.add(w);
+            }
         }
-        return l;
-    }
-    private int upperBound(int[] arr, int target) {
-        int l = 0, h = arr.length;
-        while (l < h) {
-            int mid = (l + h) / 2;
-            if (arr[mid] <= target) l = mid + 1;
-            else h = mid;
-        }
-        return l;
+        return res;
     }
 }
