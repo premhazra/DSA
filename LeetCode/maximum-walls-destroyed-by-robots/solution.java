@@ -15,14 +15,11 @@ class Solution {
             arr[i][0] = robots[i];
             arr[i][1] = distance[i];
         }
-
         Arrays.sort(arr, (a, b) -> a[0] - b[0]);
 
-        int m = walls.length;
-
-        // Precompute intervals for each robot
-        int[][] left = new int[n][2];
-        int[][] right = new int[n][2];
+        // Precompute gains for segments
+        int[] gainLeft = new int[n];   // robot i shooting LEFT into segment (i-1, i)
+        int[] gainRight = new int[n];  // robot i shooting RIGHT into segment (i, i+1)
 
         for (int i = 0; i < n; i++) {
             int r = arr[i][0], d = arr[i][1];
@@ -30,29 +27,40 @@ class Solution {
             int leftBlock = (i == 0) ? Integer.MIN_VALUE : arr[i - 1][0];
             int rightBlock = (i == n - 1) ? Integer.MAX_VALUE : arr[i + 1][0];
 
-            int l1 = Math.max(r - d, leftBlock + 1);
+            // LEFT interval (affects segment i)
+            int l1 = Math.max(r - d, leftBlock);
             int r1 = r;
+            gainLeft[i] = count(walls, l1, r1);
 
+            // RIGHT interval (affects segment i)
             int l2 = r;
-            int r2 = Math.min(r + d, rightBlock - 1);
-
-            left[i] = new int[]{l1, r1};
-            right[i] = new int[]{l2, r2};
+            int r2 = Math.min(r + d, rightBlock);
+            gainRight[i] = count(walls, l2, r2);
         }
 
-        // Prefix DP
-        int[] dp = new int[n + 1];
+        // DP
+        int[][] dp = new int[n][2];
 
-        for (int i = 0; i < n; i++) {
-            dp[i + 1] = dp[i];
+        // Base
+        dp[0][0] = gainLeft[0];   // first robot shoots left
+        dp[0][1] = gainRight[0];  // first robot shoots right
 
-            int leftCount = count(walls, left[i][0], left[i][1]);
-            int rightCount = count(walls, right[i][0], right[i][1]);
+        for (int i = 1; i < n; i++) {
+            // If robot i shoots LEFT → segment i counted from LEFT
+            dp[i][0] = Math.max(
+                dp[i - 1][0] + gainLeft[i],  // prev LEFT → no conflict
+                dp[i - 1][1] + gainLeft[i]   // prev RIGHT → still fine
+            );
 
-            dp[i + 1] = Math.max(dp[i + 1], dp[i] + Math.max(leftCount, rightCount));
+            // If robot i shoots RIGHT → segment i counted from RIGHT
+            // BUT segment (i-1, i) already handled by previous robot
+            dp[i][1] = Math.max(
+                dp[i - 1][0] + gainRight[i],
+                dp[i - 1][1] + gainRight[i]
+            );
         }
 
-        return dp[n];
+        return Math.max(dp[n - 1][0], dp[n - 1][1]);
     }
 
     private int count(int[] walls, int l, int r) {
