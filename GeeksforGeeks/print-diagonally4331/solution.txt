@@ -1,0 +1,27 @@
+// Problem: Print Diagonally
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+import java.util.*;
+
+class Solution {
+    static ArrayList<Integer> diagView(int mat[][]) {
+        int n = mat.length;
+        ArrayList<Integer> result = new ArrayList<>();
+
+        for (int d = 0; d < 2 * n - 1; d++) {
+
+            int row = Math.max(0, d - (n - 1));
+            int col = d - row;
+            
+            while (row < n && col >= 0) {
+                result.add(mat[row][col]);
+                row++;
+                col--;
+            }
+        }
+        
+        return result;
+    }
+}
