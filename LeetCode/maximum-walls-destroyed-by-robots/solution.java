@@ -8,76 +8,74 @@ import java.util.*;
 class Solution {
     public int maxWalls(int[] robots, int[] distance, int[] walls) {
         int n = robots.length;
-        int[][] robotPairs = new int[n][2];
+        int[][] r = new int[n][2];
         for (int i = 0; i < n; i++) {
-            robotPairs[i][0] = robots[i];
-            robotPairs[i][1] = distance[i];
+            r[i][0] = robots[i];
+            r[i][1] = distance[i];
         }
-
-        // Sort robots by position
-        Arrays.sort(robotPairs, (a, b) -> Integer.compare(a[0], b[0]));
-        // Sort walls to use binary search for counting
+        Arrays.sort(r, (a, b) -> Integer.compare(a[0], b[0]));
         Arrays.sort(walls);
 
-        // dp[i] = max walls destroyed by first i robots
-        int[] dp = new int[n + 1];
+        // dp[i][0]: Max walls destroyed considering robots 0...i, robot i fires LEFT
+        // dp[i][1]: Max walls destroyed considering robots 0...i, robot i fires RIGHT
+        long[][] dp = new long[n][2];
 
         for (int i = 0; i < n; i++) {
-            int pos = robotPairs[i][0];
-            int dist = robotPairs[i][1];
+            // Calculate walls hit if firing LEFT
+            // Reach is limited by the previous robot's position
+            long leftLimit = (i == 0) ? Long.MIN_VALUE : r[i-1][0];
+            int wallsLeft = count(walls, Math.max(leftLimit, (long)r[i][0] - r[i][1]), r[i][0]);
+            
+            if (i == 0) {
+                dp[i][0] = wallsLeft;
+            } else {
+                // To fire left, it doesn't matter what robot i-1 did because 
+                // the bullets stop at the robots anyway.
+                dp[i][0] = Math.max(dp[i-1][0], dp[i-1][1]) + wallsLeft;
+            }
 
-            // Option 1: Robot i fires LEFT
-            // Bullet stops at robot i-1
-            long leftLimit = (i == 0) ? Long.MIN_VALUE : robotPairs[i-1][0];
-            long leftReach = Math.max(leftLimit, (long)pos - dist);
-            // Note: If wall is AT leftLimit (another robot), it's NOT destroyed 
-            // because the bullet stops AT the robot. 
-            // Actually, the problem says "stops at that robot". 
-            // If robot is at 5 and wall is at 5, wall is destroyed. 
-            // BUT, if bullet comes from the right and hits robot at 5, 
-            // it stops. It includes the position of the robot it hits.
-            int wallsLeft = countWalls(walls, leftReach, (long)pos);
-
-            // Option 2: Robot i fires RIGHT
-            // Bullet stops at robot i+1
-            long rightLimit = (i == n - 1) ? Long.MAX_VALUE : robotPairs[i+1][0];
-            long rightReach = Math.min(rightLimit, (long)pos + dist);
-            int wallsRight = countWalls(walls, (long)pos, rightReach);
-
-            dp[i+1] = dp[i] + Math.max(wallsLeft, wallsRight);
+            // Calculate walls hit if firing RIGHT
+            // Reach is limited by the NEXT robot's position
+            long rightLimit = (i == n - 1) ? Long.MAX_VALUE : r[i+1][0];
+            int wallsRight = count(walls, r[i][0], Math.min(rightLimit, (long)r[i][0] + r[i][1]));
+            
+            if (i == 0) {
+                dp[i][1] = wallsRight;
+            } else {
+                // If robot i fires RIGHT, we must ensure we don't double count walls 
+                // that robot i-1 might have also destroyed firing RIGHT.
+                // However, the "bullet stops at robot" rule means robot i-1's RIGHT 
+                // fire stops at robot i, and robot i's RIGHT fire starts at robot i.
+                // They are perfectly contiguous but disjoint!
+                dp[i][1] = Math.max(dp[i-1][0], dp[i-1][1]) + wallsRight;
+            }
         }
 
-        return dp[n];
+        return (int)Math.max(dp[n-1][0], dp[n-1][1]);
     }
 
-    private int countWalls(int[] walls, long L, long R) {
+    private int count(int[] walls, long L, long R) {
         if (L > R) return 0;
-        
-        // Find first index where walls[idx] >= L
         int start = lowerBound(walls, L);
-        // Find first index where walls[idx] > R
         int end = upperBound(walls, R);
-        
         return Math.max(0, end - start);
     }
 
-    private int lowerBound(int[] arr, long target) {
-        int low = 0, high = arr.length;
-        while (low < high) {
-            int mid = low + (high - low) / 2;
-            if (arr[mid] >= target) high = mid;
-            else low = mid + 1;
+    private int lowerBound(int[] a, long t) {
+        int l = 0, h = a.length;
+        while (l < h) {
+            int m = l + (h - l) / 2;
+            if (a[m] >= t) h = m; else l = m + 1;
         }
-        return low;
+        return l;
     }
 
-    private int upperBound(int[] arr, long target) {
-        int low = 0, high = arr.length;
-        while (low < high) {
-            int mid = low + (high - low) / 2;
-            if (arr[mid] <= target) low = mid + 1;
-            else high = mid;
+    private int upperBound(int[] a, long t) {
+        int l = 0, h = a.length;
+        while (l < h) {
+            int m = l + (h - l) / 2;
+            if (a[m] <= t) l = m + 1; else h = m;
         }
-        return low;
+        return l;
     }
 }
