@@ -8,74 +8,55 @@ import java.util.*;
 class Solution {
     public int maxWalls(int[] robots, int[] distance, int[] walls) {
         int n = robots.length;
-        int[][] r = new int[n][2];
+
+        int[][] arr = new int[n][2];
         for (int i = 0; i < n; i++) {
-            r[i][0] = robots[i];
-            r[i][1] = distance[i];
+            arr[i][0] = robots[i];
+            arr[i][1] = distance[i];
         }
-        Arrays.sort(r, (a, b) -> Integer.compare(a[0], b[0]));
+
+        Arrays.sort(arr, (a, b) -> a[0] - b[0]);
         Arrays.sort(walls);
 
-        // dp[i][0]: Max walls destroyed considering robots 0...i, robot i fires LEFT
-        // dp[i][1]: Max walls destroyed considering robots 0...i, robot i fires RIGHT
-        long[][] dp = new long[n][2];
+        Set<Integer> destroyed = new HashSet<>();
 
         for (int i = 0; i < n; i++) {
-            // Calculate walls hit if firing LEFT
-            // Reach is limited by the previous robot's position
-            long leftLimit = (i == 0) ? Long.MIN_VALUE : r[i-1][0];
-            int wallsLeft = count(walls, Math.max(leftLimit, (long)r[i][0] - r[i][1]), r[i][0]);
-            
-            if (i == 0) {
-                dp[i][0] = wallsLeft;
-            } else {
-                // To fire left, it doesn't matter what robot i-1 did because 
-                // the bullets stop at the robots anyway.
-                dp[i][0] = Math.max(dp[i-1][0], dp[i-1][1]) + wallsLeft;
-            }
+            int r = arr[i][0];
+            int d = arr[i][1];
 
-            // Calculate walls hit if firing RIGHT
-            // Reach is limited by the NEXT robot's position
-            long rightLimit = (i == n - 1) ? Long.MAX_VALUE : r[i+1][0];
-            int wallsRight = count(walls, r[i][0], Math.min(rightLimit, (long)r[i][0] + r[i][1]));
-            
-            if (i == 0) {
-                dp[i][1] = wallsRight;
+            int leftBlock = (i == 0) ? Integer.MIN_VALUE : arr[i - 1][0];
+            int rightBlock = (i == n - 1) ? Integer.MAX_VALUE : arr[i + 1][0];
+
+            // LEFT RANGE
+            int leftStart = Math.max(r - d, leftBlock + 1);
+            int leftEnd = r;
+
+            // RIGHT RANGE
+            int rightStart = r;
+            int rightEnd = Math.min(r + d, rightBlock - 1);
+
+            // Count both
+            List<Integer> leftWalls = getWalls(walls, leftStart, leftEnd);
+            List<Integer> rightWalls = getWalls(walls, rightStart, rightEnd);
+
+            // Choose better direction (greedy)
+            if (leftWalls.size() > rightWalls.size()) {
+                destroyed.addAll(leftWalls);
             } else {
-                // If robot i fires RIGHT, we must ensure we don't double count walls 
-                // that robot i-1 might have also destroyed firing RIGHT.
-                // However, the "bullet stops at robot" rule means robot i-1's RIGHT 
-                // fire stops at robot i, and robot i's RIGHT fire starts at robot i.
-                // They are perfectly contiguous but disjoint!
-                dp[i][1] = Math.max(dp[i-1][0], dp[i-1][1]) + wallsRight;
+                destroyed.addAll(rightWalls);
             }
         }
 
-        return (int)Math.max(dp[n-1][0], dp[n-1][1]);
+        return destroyed.size();
     }
 
-    private int count(int[] walls, long L, long R) {
-        if (L > R) return 0;
-        int start = lowerBound(walls, L);
-        int end = upperBound(walls, R);
-        return Math.max(0, end - start);
-    }
-
-    private int lowerBound(int[] a, long t) {
-        int l = 0, h = a.length;
-        while (l < h) {
-            int m = l + (h - l) / 2;
-            if (a[m] >= t) h = m; else l = m + 1;
+    private List<Integer> getWalls(int[] walls, int l, int r) {
+        List<Integer> res = new ArrayList<>();
+        for (int w : walls) {
+            if (w >= l && w <= r) {
+                res.add(w);
+            }
         }
-        return l;
-    }
-
-    private int upperBound(int[] a, long t) {
-        int l = 0, h = a.length;
-        while (l < h) {
-            int m = l + (h - l) / 2;
-            if (a[m] <= t) l = m + 1; else h = m;
-        }
-        return l;
+        return res;
     }
 }
