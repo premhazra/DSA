@@ -1,0 +1,51 @@
+// Problem: Stable Marriage Problem
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+import java.util.*;
+
+class Solution {
+    public int[] stableMarriage(int[][] men, int[][] women) {
+        int n = men.length;
+
+        int[] partnerWomen = new int[n];
+        Arrays.fill(partnerWomen, -1);
+
+        int[] result = new int[n];
+        int[] next = new int[n];
+
+        int[][] rank = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                rank[i][women[i][j]] = j;
+            }
+        }
+
+        Queue<Integer> freeMen = new LinkedList<>();
+        for (int i = 0; i < n; i++) freeMen.add(i);
+
+        while (!freeMen.isEmpty()) {
+            int man = freeMen.poll();
+            int woman = men[man][next[man]];
+            next[man]++;
+
+            if (partnerWomen[woman] == -1) {
+                partnerWomen[woman] = man;
+                result[man] = woman;
+            } else {
+                int other = partnerWomen[woman];
+                if (rank[woman][man] < rank[woman][other]) {
+                    partnerWomen[woman] = man;
+                    result[man] = woman;
+                    freeMen.add(other);
+                } else {
+                    freeMen.add(man);
+                }
+            }
+        }
+
+        return result;
+    }
+}
