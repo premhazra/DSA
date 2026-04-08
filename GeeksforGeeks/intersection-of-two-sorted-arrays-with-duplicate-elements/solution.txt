@@ -1,0 +1,48 @@
+// Problem: Intersection of Two Sorted Arrays
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+import java.util.*;
+
+class Solution {
+    ArrayList<Integer> intersection(int[] a, int[] b) {
+        ArrayList<Integer> result = new ArrayList<>();
+        int i = 0, j = 0;
+        
+        while (i < a.length && j < b.length) {
+            if (i > 0 && a[i] == a[i - 1]) {
+                i++;
+                continue;
+            }
+            
+            if (a[i] == b[j]) {
+                result.add(a[i]);
+                i++;
+                j++;
+            } else if (a[i] < b[j]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return result;
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        
+        int[] a1 = {1, 1, 2, 2, 2, 4};
+        int[] b1 = {2, 2, 4, 4};
+        System.out.println("Test 1: " + sol.intersection(a1, b1));
+        
+        int[] a2 = {1, 2};
+        int[] b2 = {3, 4};
+        System.out.println("Test 2: " + sol.intersection(a2, b2));
+        
+        int[] a3 = {1, 2, 3};
+        int[] b3 = {1, 2, 3};
+        System.out.println("Test 3: " + sol.intersection(a3, b3));
+        
+        int[] a4 = {-10, -5, 0, 5, 10};
