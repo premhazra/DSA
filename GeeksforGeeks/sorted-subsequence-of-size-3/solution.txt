@@ -1,0 +1,40 @@
+// Problem: Sorted subsequence of size 3
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+import java.util.*;
+
+class Solution {
+    public ArrayList<Integer> find3Numbers(int[] arr) {
+        int n = arr.length;
+        for (int j = 1; j < n - 1; j++) {
+            int leftMin = Integer.MAX_VALUE;
+            boolean foundLeft = false;
+            for (int i = 0; i < j; i++) {
+                if (arr[i] < arr[j]) {
+                    leftMin = arr[i];
+                    foundLeft = true;
+                    break; 
+                }
+            }
+            int rightMax = Integer.MIN_VALUE;
+            boolean foundRight = false;
+            for (int k = j + 1; k < n; k++) {
+                if (arr[k] > arr[j]) {
+                    rightMax = arr[k];
+                    foundRight = true;
+                    break;
+                }
+            }
+            if (foundLeft && foundRight) {
+                ArrayList<Integer> result = new ArrayList<>();
+                result.add(leftMin);
+                result.add(arr[j]);
+                result.add(rightMax);
+                return result;
+            }
+        }
+        return new ArrayList<>();
+    }
+}
