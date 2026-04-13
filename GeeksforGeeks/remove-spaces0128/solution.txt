@@ -1,0 +1,11 @@
+// Problem: Remove Spaces
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    String removeSpaces(String s) {
+        // code here
+        return s.replace(" ","");
+    }
+}
