@@ -1,0 +1,11 @@
+// Problem: Solution in Python 3
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    String URLify(String s) {
+        // code here
+        return s.replace(" ", "%20");
+    }
+}
