@@ -1,0 +1,12 @@
+// Problem: Finding Profession
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public String profession(int level, int pos) {
+        int flips = Integer.bitCount(pos - 1);
+
+        return (flips % 2 == 0) ? "Engineer" : "Doctor";
+    }
+}
