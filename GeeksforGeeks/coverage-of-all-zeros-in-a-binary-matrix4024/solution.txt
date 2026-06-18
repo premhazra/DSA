@@ -1,0 +1,54 @@
+// Problem: Coverage of all Zeros in a Binary Matrix
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+        int m = mat[0].length;
+        int total = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+
+                if (mat[i][j] == 0) {
+                    int coverage = 0;
+
+                    // Left
+                    for (int k = j - 1; k >= 0; k--) {
+                        if (mat[i][k] == 1) {
+                            coverage++;
+                            break;
+                        }
+                    }
+
+                    // Right
+                    for (int k = j + 1; k < m; k++) {
+                        if (mat[i][k] == 1) {
+                            coverage++;
+                            break;
+                        }
+                    }
+
+                    // Up
+                    for (int k = i - 1; k >= 0; k--) {
+                        if (mat[k][j] == 1) {
+                            coverage++;
+                            break;
+                        }
+                    }
+
+                    // Down
+                    for (int k = i + 1; k < n; k++) {
+                        if (mat[k][j] == 1) {
+                            coverage++;
+                            break;
+                        }
+                    }
+
+                    total += coverage;
+                }
+            }
+        }
+
+        return total;
+    }
+}
