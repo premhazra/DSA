@@ -1,0 +1,43 @@
+// Problem: Choose and Swap
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public String chooseSwap(String s) {
+        int n = s.length();
+
+        // last occurrence of each character
+        int[] last = new int[26];
+
+        for (int i = 0; i < n; i++) {
+            last[s.charAt(i) - 'a'] = i;
+        }
+
+        char[] arr = s.toCharArray();
+
+        for (int i = 0; i < n; i++) {
+            int curr = arr[i] - 'a';
+
+            // find a smaller character that occurs later
+            for (int ch = 0; ch < curr; ch++) {
+                if (last[ch] > i) {
+                    char c1 = arr[i];
+                    char c2 = (char) ('a' + ch);
+
+                    // swap all occurrences
+                    for (int j = 0; j < n; j++) {
+                        if (arr[j] == c1)
+                            arr[j] = c2;
+                        else if (arr[j] == c2)
+                            arr[j] = c1;
+                    }
+
+                    return new String(arr);
+                }
+            }
+        }
+
+        return s;
+    }
+}
