@@ -1,0 +1,14 @@
+// Problem: While Loop
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public static void utility(int x) {
+        // code here
+        while(x>=0){
+            System.out.print(" "+x);
+            x--;
+        }
+    }
+}
