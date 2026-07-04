@@ -1,0 +1,54 @@
+// Problem: Substrings with more 1's than 0's
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+
+        int query(int index) {
+            int sum = 0;
+            while (index > 0) {
+                sum += bit[index];
+                index -= index & (-index);
+            }
+            return sum;
+        }
+    }
+
+    public int countSubstring(String s) {
+        int n = s.length();
+
+        // Prefix Sum
+        int[] prefix = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            if (s.charAt(i - 1) == '1')
+                prefix[i] = prefix[i - 1] + 1;
+            else
+                prefix[i] = prefix[i - 1] - 1;
+        }
+
+        // Coordinate Compression
+        int[] temp = prefix.clone();
+        Arrays.sort(temp);
+
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int rank = 1;
+
+        for (int x : temp) {
+            if (!map.containsKey(x)) {
+                map.put(x, rank++);
+            }
+        }
+
+        Fenwick ft = new Fenwick(rank);
+
+        long ans = 0;
+
+        for (int x : prefix) {
+            int id = map.get(x);
+            ans += ft.query(id - 1);
+            ft.update(id, 1);
+        }
+
+        return (int) ans;
+    }
+}
