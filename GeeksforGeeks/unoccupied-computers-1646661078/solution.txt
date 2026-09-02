@@ -1,0 +1,41 @@
+// Problem: Unoccupied ComputersSolved
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public int solve(int n, String s) {
+        // state[i] stores:
+        // 0 = not visited
+        // 1 = currently assigned a computer
+        // 2 = rejected due to lack of computers
+        int[] state = new int[26];
+
+        int occupied = 0;
+        int rejected = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            int customer = s.charAt(i) - 'A';
+
+            if (state[customer] == 0) {
+                // First arrival
+                if (occupied < n) {
+                    occupied++;
+                    state[customer] = 1; // Assigned a computer
+                } else {
+                    rejected++;
+                    state[customer] = 2; // Rejected
+                }
+            } else if (state[customer] == 1) {
+                // Departure of an assigned customer
+                occupied--;
+                state[customer] = 0;
+            } else if (state[customer] == 2) {
+                // Departure of a rejected customer
+                state[customer] = 0;
+            }
+        }
+
+        return rejected;
+    }
+}
