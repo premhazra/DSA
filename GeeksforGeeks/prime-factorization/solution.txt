@@ -1,0 +1,35 @@
+// Problem: All Prime Factors in Sorted OrderSolved
+// Difficulty: Unknown
+// Source: GeeksforGeeks
+// Language: Java (21)
+// Synced by CodexSync
+class Solution {
+    public static void printPrimeFactorization(int n) {
+        // code here
+        while (n % 2 == 0) {
+            System.out.print(2 + " ");
+            n /= 2;
+        }
+
+        // Check for odd factors from 3 to √n
+        for (int i = 3; i * i <= n; i += 2) {
+            while (n % i == 0) {
+                System.out.print(i + " ");
+                n /= i;
+            }
+        }
+
+        // If n is still > 2, it must be prime
+        if (n > 2) {
+            System.out.print(n + " ");
+        }
+    }
+
+    // Test main
+    public static void main(String[] args) {
+        printPrimeFactorization(100); // Output: 2 2 5 5
+        System.out.println();
+        printPrimeFactorization(27);  // Output: 3 3 3
+    }
+        
+}
