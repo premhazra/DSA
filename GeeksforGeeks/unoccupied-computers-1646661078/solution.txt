@@ -35,7 +35,3 @@ class Solution {
                 state[customer] = 0;
             }
         }
-
-        return rejected;
-    }
-}
